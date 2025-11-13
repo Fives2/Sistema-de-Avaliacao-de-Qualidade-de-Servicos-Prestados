@@ -1,3 +1,6 @@
+// MODIFICAR por enquanto está simulando o dispositivo 1, modificar depois da criação do login e crud
+// Organizar métodos
+
 const telas = {
   inicial: document.getElementById("telaInicial"),
   perguntas: document.getElementById("telaPerguntas"),
@@ -44,13 +47,21 @@ function carregarPerguntas() {
     .catch(() => alert("Erro ao carregar perguntas."));
 }
 
-// Mostrar tela
+/**
+ * Mostrar tela
+ * 
+ * @param {*} tela 
+ */
 function mostrarTela(tela) {
   Object.values(telas).forEach((t) => t.classList.add("hidden"));
   telas[tela].classList.remove("hidden");
 }
 
-// Mostrar pergunta atual
+/**
+ * Mostrar pergunta atual
+ * 
+ * @param {int} indice 
+ */
 function mostrarPergunta(indice) {
   indiceAtual = indice;
   const p = perguntas[indice];
@@ -94,6 +105,7 @@ function mostrarPergunta(indice) {
   habilitarAvancar();
 }
 
+// Habilitar botão avançar
 function habilitarAvancar() {
   const respondida = respostas[perguntas[indiceAtual].pegcodigo] !== undefined;
   elementos.btnProximo.disabled = !respondida;

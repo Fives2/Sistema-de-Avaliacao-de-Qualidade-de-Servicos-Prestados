@@ -16,3 +16,4 @@ function getQuestoesAtivas() {
 }
 
 // mover isso para o perguntas, verificar o que faz mais sentido inserir aqui ou jogar tudo aqui
+// colocar métodos em arquivos separados

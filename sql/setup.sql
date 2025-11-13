@@ -95,3 +95,5 @@ INSERT INTO pergunta (pegcodigo, pegtexto) VALUES
 (1, 'Como você avalia o atendimento recebido?'),
 (2, 'O ambiente está limpo e organizado?'),
 (3, 'O tempo de espera foi adequado?');
+
+/* MODIFICAR alterar a tabela avaliacoes adicionar mais pks*/

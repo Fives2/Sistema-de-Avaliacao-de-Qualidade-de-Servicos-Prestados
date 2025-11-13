@@ -2,6 +2,9 @@
 require_once './../../src/db.php';
 header('Content-Type: application/json');
 
+// MODIFICAR: Mover para SRC
+// por enquanto está simulando o dispositivo 1, modificar depois da criação do login e crud
+
 /**
  * Lê e valida os dados enviados no corpo da requisição.
  */

@@ -15,9 +15,9 @@
 
         <!-- TELA INICIAL -->
         <div id="telaInicial" class="tela">
-            <h1>Avaliação de Qualidade</h1>
+            <h1>Avaliação de Qualidade</h1> <!-- MODIFICAR colocar o título do setor ou algo relacionado, talvez personalizavel -->
             <p class="intro">Deseja avaliar o serviço?</p>
-            <button id="btnIniciar" class="btn-principal">Sim, avaliar</button>
+            <button id="btnIniciar" class="btn-principal">Avaliar</button>
         </div>
 
         <!-- TELAS DAS PERGUNTAS -->
