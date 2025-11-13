@@ -95,8 +95,3 @@ INSERT INTO pergunta (pegcodigo, pegtexto) VALUES
 (1, 'Como você avalia o atendimento recebido?'),
 (2, 'O ambiente está limpo e organizado?'),
 (3, 'O tempo de espera foi adequado?');
-
--- INSERT INTO avaliacoes (avacodigo, setcodigo, pegcodigo, discodigo, resnota, resfeedback) VALUES
--- (1, 1, 1, 1, 8, 'Atendimento cortês e eficiente'),
--- (2, 1, 2, 1, 9, 'Ambiente impecável'),
--- (3, 1, 3, 1, 7, 'Espera poderia ser menor');

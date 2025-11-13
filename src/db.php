@@ -1,6 +1,10 @@
 <?php
 require_once './../../config.php';
 
+/**
+ * Dados estão chumbados
+ * @return array
+ */
 function getQuestoesAtivas() {
     $pdo = getConnection();
     $stmt = $pdo->prepare("SELECT pegcodigo, pegtexto 

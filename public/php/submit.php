@@ -2,52 +2,150 @@
 require_once './../../src/db.php';
 header('Content-Type: application/json');
 
-$data = json_decode(file_get_contents('php://input'), true);
-if (!$data || !isset($data['dispositivo']) || !isset($data['respostas']) || empty($data['respostas'])) {
-    http_response_code(400);
-    echo json_encode(['success' => false, 'message' => 'Dados inválidos ou incompletos.']);
+/**
+ * Lê e valida os dados enviados no corpo da requisição.
+ */
+function getRequestData(){
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    if (!$data ||
+        !isset($data['dispositivo']) ||
+        !isset($data['respostas']) ||
+        empty($data['respostas'])) {
+        sendError(400, "Dados inválidos ou incompletos.");
+    }
+
+    return $data;
+}
+
+/**
+ * Envia uma resposta de erro padronizada.
+ * 
+ * @param int $statusCode
+ * @param string $message
+ */
+function sendError($statusCode, $message){
+    http_response_code($statusCode);
+    echo json_encode(['success' => false, 'message' => $message]);
     exit;
 }
 
-$dispositivo = $data['dispositivo'];
-$respostas = $data['respostas'];
-$feedback = trim($data['feedback'] ?? '');
-$pdo = getConnection();
+/**
+ * Busca o discodigo e setcodigo do dispositivo.
+ * 
+ * @param PDO $pdo
+ * @param int $dispositivo
+ * @return array
+ */
+function buscarDadosDoDispositivo(PDO $pdo, $dispositivo){
+    $sql = "SELECT discodigo, setcodigo 
+            FROM dispositivo 
+            WHERE discodigo = :codigo AND disstatus = 1";
 
-try {
-    $pdo->beginTransaction();
-    // Buscar discodigo e setcodigo pelo disnome
-    $stmt = $pdo->prepare("SELECT discodigo, setcodigo FROM dispositivo WHERE discodigo = :codigoDispsitivo AND disstatus = 1");
-    $stmt->execute(['codigoDispsitivo' => $dispositivo]);
-    $dis = $stmt->fetch(PDO::FETCH_ASSOC);
-    if (!$dis) {
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(['codigo' => $dispositivo]);
+
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$result) {
         throw new Exception("Dispositivo não encontrado ou inativo.");
     }
-    $discodigo = $dis['discodigo'];
-    $setcodigo = $dis['setcodigo'];
-    // Obter o próximo avacodigo (máximo atual + 1)
+
+    return $result;
+}
+
+/**
+ * Obtém o próximo código de avaliação (avacodigo).
+ * 
+ * @param PDO $pdo
+ * @return int
+ */
+function gerarNovoCodigoAvaliacao(PDO $pdo){
     $maxStmt = $pdo->query("SELECT COALESCE(MAX(avacodigo), 0) FROM avaliacoes");
     $max = $maxStmt->fetchColumn();
     $ava_id = $max + 1;
-    // Inserir uma linha por pergunta, com o mesmo feedback em todas
-    foreach ($respostas as $pegcodigo => $resnota) {
-        $stmt = $pdo->prepare("INSERT INTO avaliacoes (avacodigo, setcodigo, pegcodigo, discodigo, resnota, resfeedback, avadatahora)
-                                        VALUES (:ava, :set, :peg, :dis, :nota, :feed, CURRENT_TIMESTAMP)
-    ");
+    return $ava_id;
+}
+
+/**
+ * Insere as respostas da avaliação na tabela.
+ * 
+ * @param PDO $pdo
+ * @param int $avaId
+ * @param int $setcodigo
+ * @param int $discodigo
+ * @param array $respostas
+ * @param string $feedback
+ */
+function inserirAvaliacoes(PDO $pdo, $avaId, $setcodigo, $discodigo, $respostas, $feedback){
+    $sql = "INSERT INTO avaliacoes 
+              (avacodigo, setcodigo, pegcodigo, discodigo, resnota, resfeedback, avadatahora)
+            VALUES 
+              (:ava, :set, :peg, :dis, :nota, :feed, CURRENT_TIMESTAMP)";
+
+    $stmt = $pdo->prepare($sql);
+
+    foreach ($respostas as $pegcodigo => $nota) {
         $stmt->execute([
-            'ava' => $ava_id,
-            'set' => $setcodigo,
-            'peg' => $pegcodigo,
-            'dis' => $discodigo,
-            'nota' => $resnota,
+            'ava'  => $avaId,
+            'set'  => $setcodigo,
+            'peg'  => $pegcodigo,
+            'dis'  => $discodigo,
+            'nota' => $nota,
             'feed' => $feedback
         ]);
-        $ava_id++;  // Incrementar para a próxima inserção // verificar se isso é necessário
+        $avaId++;  // Incrementar para a próxima inserção // verificar se isso é necessário (Chave verificar se pegcodigo não é chave?)
     }
-    $pdo->commit();
-    echo json_encode(['success' => true]);
-} catch (Exception $e) {
-    $pdo->rollBack();
-    http_response_code(500);
-    echo json_encode(['success' => false, 'message' => $e->getMessage()]);
 }
+
+/**
+ * Envia resposta JSON de sucesso.
+ */
+function enviaSucesso(){
+    echo json_encode(['success' => true]);
+    exit;
+}
+
+/* ----------------------------------------------------
+   EXECUÇÃO PRINCIPAL DO SCRIPT
+----------------------------------------------------- */
+
+$data = getRequestData();
+$pdo = getConnection();
+
+$dispositivo = $data['dispositivo'];
+$respostas   = $data['respostas'];
+$feedback    = trim($data['feedback'] ?? '');
+
+try {
+    $pdo->beginTransaction();
+
+    // 1. Busca dados do dispositivo
+    $dadosDis = buscarDadosDoDispositivo($pdo, $dispositivo);
+
+    // 2. Gera o próximo ID de avaliação
+    $avaId = gerarNovoCodigoAvaliacao($pdo);
+
+    // 3. Insere todas as avaliações
+    inserirAvaliacoes(
+        $pdo,
+        $avaId,
+        $dadosDis['setcodigo'],
+        $dadosDis['discodigo'],
+        $respostas,
+        $feedback
+    );
+
+    $pdo->commit();
+    enviaSucesso();
+
+} catch (Exception $e) {
+
+    // Reverte a transação em caso de erro
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
+
+    sendError(500, $e->getMessage());
+}
+
