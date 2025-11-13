@@ -17,24 +17,22 @@ $pdo = getConnection();
 try {
     $pdo->beginTransaction();
     // Buscar discodigo e setcodigo pelo disnome
-    $stmt = $pdo->prepare("SELECT discodigo, setcodigo FROM dispositivo WHERE disnome = :codigodip AND disstatus = 1");
-    $stmt->execute(['codigodip' => $dispositivo]);
+    $stmt = $pdo->prepare("SELECT discodigo, setcodigo FROM dispositivo WHERE discodigo = :codigoDispsitivo AND disstatus = 1");
+    $stmt->execute(['codigoDispsitivo' => $dispositivo]);
     $dis = $stmt->fetch(PDO::FETCH_ASSOC);
     if (!$dis) {
         throw new Exception("Dispositivo não encontrado ou inativo.");
     }
     $discodigo = $dis['discodigo'];
     $setcodigo = $dis['setcodigo'];
-    
     // Obter o próximo avacodigo (máximo atual + 1)
     $maxStmt = $pdo->query("SELECT COALESCE(MAX(avacodigo), 0) FROM avaliacoes");
     $max = $maxStmt->fetchColumn();
     $ava_id = $max + 1;
-
     // Inserir uma linha por pergunta, com o mesmo feedback em todas
     foreach ($respostas as $pegcodigo => $resnota) {
         $stmt = $pdo->prepare("INSERT INTO avaliacoes (avacodigo, setcodigo, pegcodigo, discodigo, resnota, resfeedback, avadatahora)
-                                      VALUES (:ava, :set, :peg, :dis, :nota, :feed, CURRENT_TIMESTAMP)
+                                        VALUES (:ava, :set, :peg, :dis, :nota, :feed, CURRENT_TIMESTAMP)
     ");
         $stmt->execute([
             'ava' => $ava_id,
@@ -44,6 +42,7 @@ try {
             'nota' => $resnota,
             'feed' => $feedback
         ]);
+        $ava_id++;  // Incrementar para a próxima inserção // verificar se isso é necessário
     }
     $pdo->commit();
     echo json_encode(['success' => true]);
