@@ -10,3 +10,5 @@ function getQuestoesAtivas() {
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
+// mover isso para o perguntas, verificar o que faz mais sentido inserir aqui ou jogar tudo aqui

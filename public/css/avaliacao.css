@@ -176,3 +176,26 @@ h1 {
     flex-direction: column;
   }
 }
+
+/* Rodapé fixo em todas as telas */
+.rodape-avaliacao {
+  margin-top: 40px;
+  padding: 20px 0;
+  text-align: center;
+  font-size: 0.85em;
+  color: #7f8c8d;
+  border-top: 1px solid #e0e0e0;
+}
+
+.rodape-avaliacao p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Responsivo */
+@media (max-width: 480px) {
+  .rodape-avaliacao {
+    font-size: 0.8em;
+    padding: 15px 0;
+  }
+}

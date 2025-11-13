@@ -53,57 +53,32 @@ COMMENT ON COLUMN pergunta.pegstatus IS 'Status da pergunta';
 ALTER TABLE pergunta ADD CONSTRAINT pergunta_pk PRIMARY KEY (pegcodigo);
 
 -- ===========================
--- TABELA: AVALIAÇÃO
+-- TABELA: AVALIACOES (nova tabela substituindo avaliacao, avaliacaopergunta e resposta)
 -- ===========================
-CREATE TABLE avaliacao (
+CREATE TABLE avaliacoes (
     avacodigo     INTEGER NOT NULL,
+    setcodigo     INTEGER NOT NULL,
+    pegcodigo     INTEGER NOT NULL,
     discodigo     INTEGER NOT NULL,
-    avadatahora   TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL
-);
-
-COMMENT ON TABLE avaliacao IS 'Tabela das avaliações do sistema';
-COMMENT ON COLUMN avaliacao.avacodigo IS 'Código identificador da avaliação';
-COMMENT ON COLUMN avaliacao.discodigo IS 'Código identificador do dispositivo';
-COMMENT ON COLUMN avaliacao.avadatahora IS 'Data e hora da avaliação';
-
-ALTER TABLE avaliacao ADD CONSTRAINT avaliacao_pk PRIMARY KEY (avacodigo);
-ALTER TABLE avaliacao ADD CONSTRAINT avaliacao_dispositivo_fk FOREIGN KEY (discodigo) REFERENCES dispositivo (discodigo);
-
--- ===========================
--- TABELA: AVALIAÇÃO_PERGUNTA (antigo ratingquestions)
--- ===========================
-CREATE TABLE avaliacaopergunta (
-    avpcodigo INTEGER NOT NULL,
-    avacodigo INTEGER NOT NULL,
-    pegcodigo INTEGER NOT NULL
-);
-
-COMMENT ON TABLE avaliacaopergunta IS 'Tabela de ligação entre avaliações e perguntas';
-COMMENT ON COLUMN avaliacaopergunta.avpcodigo IS 'Código identificador da avaliação-pergunta';
-COMMENT ON COLUMN avaliacaopergunta.avacodigo IS 'Código da avaliação';
-COMMENT ON COLUMN avaliacaopergunta.pegcodigo IS 'Código da pergunta';
-
-ALTER TABLE avaliacaopergunta ADD CONSTRAINT avaliacaopergunta_pk PRIMARY KEY (avpcodigo);
-ALTER TABLE avaliacaopergunta ADD CONSTRAINT avaliacaopergunta_avaliacao_fk FOREIGN KEY (avacodigo) REFERENCES avaliacao (avacodigo);
-ALTER TABLE avaliacaopergunta ADD CONSTRAINT avaliacaopergunta_pergunta_fk FOREIGN KEY (pegcodigo) REFERENCES pergunta (pegcodigo);
-
--- ===========================
--- TABELA: RESPOSTAS
--- ===========================
-CREATE TABLE resposta (
-    avpcodigo     INTEGER NOT NULL,
     resnota       SMALLINT NOT NULL,
     resfeedback   VARCHAR(300),
-    CONSTRAINT resposta_resnota_check CHECK (resnota >= 0 AND resnota <= 10)
+    avadatahora   TIMESTAMP WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    CONSTRAINT avaliacoes_resnota_check CHECK (resnota >= 0 AND resnota <= 10)
 );
 
-COMMENT ON TABLE resposta IS 'Tabela de respostas das avaliações';
-COMMENT ON COLUMN resposta.avpcodigo IS 'Código da relação avaliação-pergunta';
-COMMENT ON COLUMN resposta.resnota IS 'Nota atribuída à pergunta (0-10)';
-COMMENT ON COLUMN resposta.resfeedback IS 'Comentário ou observação do respondente';
+COMMENT ON TABLE avaliacoes IS 'Tabela das avaliações do sistema';
+COMMENT ON COLUMN avaliacoes.avacodigo IS 'ID da avaliação (PK)';
+COMMENT ON COLUMN avaliacoes.setcodigo IS 'ID do setor (FK)';
+COMMENT ON COLUMN avaliacoes.pegcodigo IS 'ID da pergunta (FK)';
+COMMENT ON COLUMN avaliacoes.discodigo IS 'ID do dispositivo (FK)';
+COMMENT ON COLUMN avaliacoes.resnota IS 'Resposta (0 a 10) (obrigatório)';
+COMMENT ON COLUMN avaliacoes.resfeedback IS 'Feedback Textual (opcional)';
+COMMENT ON COLUMN avaliacoes.avadatahora IS 'Data/Hora da avaliação (obrigatório – data/hora atuais)';
 
-ALTER TABLE resposta ADD CONSTRAINT resposta_pk PRIMARY KEY (avpcodigo);
-ALTER TABLE resposta ADD CONSTRAINT resposta_avaliacaopergunta_fk FOREIGN KEY (avpcodigo) REFERENCES avaliacaopergunta (avpcodigo);
+ALTER TABLE avaliacoes ADD CONSTRAINT avaliacoes_pk PRIMARY KEY (avacodigo);
+ALTER TABLE avaliacoes ADD CONSTRAINT avaliacoes_setor_fk FOREIGN KEY (setcodigo) REFERENCES setor (setcodigo);
+ALTER TABLE avaliacoes ADD CONSTRAINT avaliacoes_pergunta_fk FOREIGN KEY (pegcodigo) REFERENCES pergunta (pegcodigo);
+ALTER TABLE avaliacoes ADD CONSTRAINT avaliacoes_dispositivo_fk FOREIGN KEY (discodigo) REFERENCES dispositivo (discodigo);
 
 -- Dados de exemplo
 INSERT INTO setor (setcodigo, setnome) VALUES
@@ -113,7 +88,7 @@ INSERT INTO setor (setcodigo, setnome) VALUES
 
 INSERT INTO dispositivo (discodigo, disnome, setcodigo) VALUES 
 (1, 'tablet1', 1),
-(2, 'tablet2', 1)
+(2, 'tablet2', 1),
 (3, 'tablet3', 1);
 
 INSERT INTO pergunta (pegcodigo, pegtexto) VALUES
@@ -121,15 +96,7 @@ INSERT INTO pergunta (pegcodigo, pegtexto) VALUES
 (2, 'O ambiente está limpo e organizado?'),
 (3, 'O tempo de espera foi adequado?');
 
--- INSERT INTO avaliacao (avacodigo, discodigo, avadatahora)
--- VALUES (1, 1, CURRENT_TIMESTAMP);
-
--- INSERT INTO avaliacaopergunta (avpcodigo, avacodigo, pegcodigo) VALUES
--- (1, 1, 1),
--- (2, 1, 2),
--- (3, 1, 3);
-
--- INSERT INTO resposta (avpcodigo, resnota, resfeedback) VALUES
--- (1, 9, 'Atendente muito educado'),
--- (2, 8, 'Ambiente limpo, mas o ar-condicionado estava fraco'),
--- (3, 7, 'Esperei cerca de 10 minutos');
+-- INSERT INTO avaliacoes (avacodigo, setcodigo, pegcodigo, discodigo, resnota, resfeedback) VALUES
+-- (1, 1, 1, 1, 8, 'Atendimento cortês e eficiente'),
+-- (2, 1, 2, 1, 9, 'Ambiente impecável'),
+-- (3, 1, 3, 1, 7, 'Espera poderia ser menor');

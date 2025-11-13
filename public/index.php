@@ -51,7 +51,12 @@
         </div>
     </div>
 
-    <input type="hidden" id="dispositivo" value="Recepção">
+        <!-- RODAPÉ FIXO EM TODAS AS TELAS -->
+        <footer class="rodape-avaliacao">
+            <p>Sua avaliação espontânea é anônima, nenhuma informação pessoal é solicitada ou armazenada.</p>
+        </footer>
+
+    <input type="hidden" id="dispositivo" value="1">  <!-- Código do dispositivo ex -->
     <script src="js/perguntas.js"></script>
 </body>
 
