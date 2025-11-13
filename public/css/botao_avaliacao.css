@@ -1,0 +1,143 @@
+.navegacao button {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1.1em;
+  transition: 0.3s;
+  width: 100%;
+}
+
+/* Botões principais */
+.btn-principal {
+  background: #3498db;
+  color: white;
+  display: inline-block;
+  width: 100%;
+  padding: 16px 20px;
+  margin: 20px 0 0;
+  font-size: 1.3em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  position: relative;
+  overflow: hidden;
+  outline: none;
+}
+
+/* Efeito de brilho ao passar o mouse */
+.btn-principal::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  transition: 0.6s;
+}
+
+.btn-principal:hover {
+  background: #2980b9;
+}
+
+.btn-principal:hover::before {
+  left: 100%;
+}
+
+/* Cores específicas */
+#btnIniciar {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+}
+
+#btnIniciar:hover {
+  background: linear-gradient(135deg, #2980b9, #1f6fa5);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(52, 152, 219, 0.3);
+}
+
+#btnEnviar {
+  background: linear-gradient(135deg, #27ae60, #219653);
+}
+
+#btnEnviar:hover {
+  background: linear-gradient(135deg, #219653, #1e8449);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(39, 174, 96, 0.3);
+}
+
+#btnEnviar:disabled {
+  background: #95a5a6 !important;
+  box-shadow: none !important;
+  transform: none !important;
+  cursor: not-allowed;
+}
+
+/* Efeito de clique (pressionar) */
+.btn-principal:active {
+  transform: translateY(1px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Botão secundário (Voltar) */
+.btn-secundario {
+  display: inline-block;
+  width: 100%;
+  padding: 16px 20px;
+  margin: 20px 0 0;
+  font-size: 1.3em;
+  font-weight: 700;
+  background: #95a5a6;
+  color: white;
+  padding: 14px 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.btn-secundario:hover {
+  background: #7f8c8d;
+}
+
+.btn-secundario:hover:not(:disabled) {
+  background: #7f8c8d;
+  transform: translateY(-1px);
+}
+
+.btn-secundario:disabled {
+  background: #bdc3c7;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Animação de entrada dos botões */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tela:not(.hidden) .btn-principal,
+.tela:not(.hidden) .navegacao {
+  animation: slideUp 0.5s ease-out;
+}

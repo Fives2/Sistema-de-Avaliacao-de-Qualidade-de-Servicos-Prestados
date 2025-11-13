@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Avaliação de Qualidade</title>
-    <link rel="stylesheet" href="css/perguntas.css">
+    <link rel="stylesheet" href="css/avaliacao.css">
+    <link rel="stylesheet" href="css/botao_avaliacao.css">
     <link rel="icon" href="favicon.ico">
 </head>
+
 <body>
-    <div class="container">
+    <div class="container_avaliacao">
 
         <!-- TELA INICIAL -->
         <div id="telaInicial" class="tela">
@@ -51,4 +54,5 @@
     <input type="hidden" id="dispositivo" value="Recepção">
     <script src="js/perguntas.js"></script>
 </body>
+
 </html>

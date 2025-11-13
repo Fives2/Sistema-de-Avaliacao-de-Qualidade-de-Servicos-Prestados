@@ -22,6 +22,7 @@ CREATE TABLE dispositivo (
     discodigo INTEGER NOT NULL,
     disnome   VARCHAR(100) NOT NULL,
     disstatus SMALLINT DEFAULT 1 NOT NULL,
+    setcodigo INTEGER
     CONSTRAINT dispositivo_status_check CHECK (disstatus >= 0 AND disstatus <= 1)
 );
 
@@ -31,6 +32,8 @@ COMMENT ON COLUMN dispositivo.disnome IS 'Nome do dispositivo';
 COMMENT ON COLUMN dispositivo.disstatus IS 'Status do dispositivo';
 
 ALTER TABLE dispositivo ADD CONSTRAINT dispositivo_pk PRIMARY KEY (discodigo);
+
+ALTER TABLE dispositivo ADD CONSTRAINT dispositivo_setor_fk FOREIGN KEY (setcodigo) REFERENCES setor (setcodigo);
 
 -- ===========================
 -- TABELA: PERGUNTAS
@@ -103,12 +106,30 @@ ALTER TABLE resposta ADD CONSTRAINT resposta_pk PRIMARY KEY (avpcodigo);
 ALTER TABLE resposta ADD CONSTRAINT resposta_avaliacaopergunta_fk FOREIGN KEY (avpcodigo) REFERENCES avaliacaopergunta (avpcodigo);
 
 -- Dados de exemplo
-INSERT INTO dispositivo (discodigo, disnome) VALUES 
-(1, 'Recepção'),
-(2, 'Caixa'),
+INSERT INTO setor (setcodigo, setnome) VALUES
+(1, 'Atendimento'),
+(2, 'Financeiro'),
 (3, 'Vendas');
+
+INSERT INTO dispositivo (discodigo, disnome, setcodigo) VALUES 
+(1, 'tablet1', 1),
+(2, 'tablet2', 1)
+(3, 'tablet3', 1);
 
 INSERT INTO pergunta (pegcodigo, pegtexto) VALUES
 (1, 'Como você avalia o atendimento recebido?'),
 (2, 'O ambiente está limpo e organizado?'),
 (3, 'O tempo de espera foi adequado?');
+
+-- INSERT INTO avaliacao (avacodigo, discodigo, avadatahora)
+-- VALUES (1, 1, CURRENT_TIMESTAMP);
+
+-- INSERT INTO avaliacaopergunta (avpcodigo, avacodigo, pegcodigo) VALUES
+-- (1, 1, 1),
+-- (2, 1, 2),
+-- (3, 1, 3);
+
+-- INSERT INTO resposta (avpcodigo, resnota, resfeedback) VALUES
+-- (1, 9, 'Atendente muito educado'),
+-- (2, 8, 'Ambiente limpo, mas o ar-condicionado estava fraco'),
+-- (3, 7, 'Esperei cerca de 10 minutos');
