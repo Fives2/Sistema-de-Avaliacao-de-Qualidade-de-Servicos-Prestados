@@ -15,7 +15,7 @@
 
         <!-- TELA INICIAL -->
         <div id="telaInicial" class="tela">
-            <h1>Avaliação de Qualidade</h1> <!-- MODIFICAR colocar o título do setor ou algo relacionado, talvez personalizavel -->
+            <h1>Avaliação de Qualidade</h1>
             <p class="intro">Deseja avaliar o serviço?</p>
             <button id="btnIniciar" class="btn-principal">Avaliar</button>
         </div>

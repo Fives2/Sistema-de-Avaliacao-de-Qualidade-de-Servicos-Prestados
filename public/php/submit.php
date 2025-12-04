@@ -97,7 +97,7 @@ function inserirAvaliacoes(PDO $pdo, $avaId, $setcodigo, $discodigo, $respostas,
             'nota' => $nota,
             'feed' => $feedback
         ]);
-        $avaId++;  // Incrementar para a próxima inserção // verificar se isso é necessário (Chave verificar se pegcodigo não é chave?)
+        $avaId++;  // Incrementar para a próxima inserção // verificar se isso é necessário pegcodigo não é chave primária da avaliações
     }
 }
 
